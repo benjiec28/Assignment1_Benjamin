@@ -4,15 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 
@@ -20,6 +25,17 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class App extends Application {
+    private Label counter;
+    private Label keyStat;
+    
+    private int currentIdx;
+    private int errors;
+    private int corrects;
+    
+    private TextField targetText;
+    private TextField userText;
+    
+    
     //sample texts
     private final String[] sampleTexts = {
         "Try typing this text. Do it as quickly and accurately as you can.",
@@ -91,18 +107,68 @@ public class App extends Application {
     }
     
     private HBox topBar() {
+        HBox topBar = new HBox(15);
+        topBar.setAlignment(Pos.CENTER_LEFT);
+        
+        counter= new Label();
+        updateCounter();
+        counter.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
+        
+        Button next = new Button("NEXT");
+        next.setFocusTraversable(false);
+        next.setOnAction(e -> nextText());
+        
+        Button reset = new Button("RESET");
+        reset.setFocusTraversable(false);
+        reset.setOnAction(e -> resetApp);
+        
         
     }
     
-    private VBox textArea() {
-        
+    private void nextText() {
+        if (currentIdx < sampleTexts.length - 1) {
+            currentIdx++;
+        } else {
+            currentIdx = 0;
+        }
+        loadCurrentText();
     }
     
-    private VBox virtualKeyboard() {
-        
+    private void loadCurrentText() {
+        targetText.setText(sampleTexts[currentIdx]);
+        userText.clear();
+        keyStat.setText("Press any key...");
+        keyStat.setTextFill(Color.YELLOW);
     }
     
+    private void updateCounter() {
+        counter.setText((currentIdx + 1) + "of" + sampleTexts.length());
+    }
     
+    private void resetApp() {
+        currentIdx = 0;
+        corrects = 0;
+        errors = 0;
+        loadCurrentText();
+    }
+    
+//    private VBox textArea() {
+//        
+//    }
+//    
+//    private VBox virtualKeyboard() {
+//        
+//    }
+//    
+//    private void keyPressed(KeyEvent e) {
+//        
+//       
+//    }
+//    
+//    private void keyReleased(KeyEvent e) {
+//        
+//        
+//    }
 
     public static void main(String[] args) {
         launch();
