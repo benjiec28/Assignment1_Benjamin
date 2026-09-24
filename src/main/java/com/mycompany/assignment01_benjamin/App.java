@@ -1,11 +1,14 @@
 package com.mycompany.assignment01_benjamin;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -17,71 +20,44 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
+    private final Map<KeyCode, Button> keyBtnMap = new HashMap<>();
+     
+    // first row of keys
+    private final Object[][] keys1 = {
+        {"`", KeyCode.bac}, {"1", KeyCode.DIGIT1}, {"2", KeyCode.DIGIT2}, {"3", KeyCode.DIGIT3},
+        {"4", KeyCode.DIGIT4}, {"5", KeyCode.DIGIT5}, {"6", KeyCode.DIGIT6}, {"7", KeyCode.DIGIT7},
+        {"8", KeyCode.DIGIT8}, {"9", KeyCode.DIGIT9}, {"0", KeyCode.DIGIT0}, {"-", KeyCode.MINUS},
+        {"=", KeyCode.PLUS},{"DELETE", KeyCode.BACK_SPACE}
+    };
+    
+    // second row of keys
+    private final Object[][] keys2 = {
+        {"Q", KeyCode.Q}, {"W", KeyCode.W}, {"E", KeyCode.E}, {"R", KeyCode.R},
+        {"T", KeyCode.T}, {"Y", KeyCode.Y}, {"U", KeyCode.U}, {"I", KeyCode.I},
+        {"O", KeyCode.O}, {"P", KeyCode.P}, {"[", KeyCode.OPEN_BRACKET}, {"]", KeyCode.CLOSE_BRACKET},
+        {"\\", KeyCode.BACK_SLASH}
+    };    
+    // third row of keys
+    private final Object[][] keys3 = {
+        {"A", KeyCode.A}, {"S", KeyCode.S}, {"D", KeyCode.D}, {"F", KeyCode.F},
+        {"G", KeyCode.G}, {"H", KeyCode.H}, {"J", KeyCode.J}, {"K", KeyCode.K},
+        {"L", KeyCode.L}, {";", KeyCode.SEMICOLON}, {"'", KeyCode.QUOTE}, {"ENTER", KeyCode.ENTER},
+    };
+    
+    // fourth row of keys
+    private final Object[][] keys4 = {
+        {"SHIFT", KeyCode.SHIFT}, {"Z", KeyCode.Z}, {"X", KeyCode.X}, {"C", KeyCode.C},
+        {"V", KeyCode.V}, {"B", KeyCode.B}, {"N", KeyCode.N}, {"M", KeyCode.M},
+        {",", KeyCode.COMMA}, {".", KeyCode.PERIOD}, {"/", KeyCode.SLASH}
+    };
+    
+    
     @Override
     public void start(Stage stage) {
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(20));
         
-        //first row of keys
-        Button accentBtn = new Button("`");
-        Button oneBtn = new Button("1");
-        Button twoBtn = new Button("2");
-        Button threeBtn = new Button("3");
-        Button fourBtn = new Button("4");
-        Button fiveBtn = new Button("5");
-        Button sixBtn = new Button("6");
-        Button sevenBtn = new Button("7");
-        Button eightBtn = new Button("8");
-        Button nineBtn = new Button("9");
-        Button zeroBtn = new Button("0");
-        Button minBtn = new Button("-");
-        Button plusBtn = new Button("+");
-        Button deleteBtn = new Button("DELETE");
-        
-        //second row of keys
-        Button tabBtn = new Button("TAB");
-        Button qBtn = new Button("q");
-        Button wBtn = new Button("w");
-        Button eBtn = new Button("e");
-        Button rBtn = new Button("r");
-        Button tBtn = new Button("t");
-        Button yBtn = new Button("y");
-        Button uBtn = new Button("u");
-        Button iBtn = new Button("i");
-        Button oBtn = new Button("o");
-        Button pBtn = new Button("p");
-        Button openBracketBtn = new Button("[");
-        Button clostBracketBtn = new Button("]");
-        Button backSlashBtn = new Button("\"");
-        
-        //third row of keys
-        Button aBtn = new Button("a");
-        Button sBtn = new Button("s");
-        Button dBtn = new Button("d");
-        Button fBtn = new Button("f");
-        Button gBtn = new Button("g");
-        Button hBtn = new Button("h");
-        Button jBtn = new Button("j");
-        Button kBtn = new Button("k");
-        Button lBtn = new Button("l");
-        Button towDotBtn = new Button(";");
-        Button quoteBtn = new Button("'");
-        Button enterBtn = new Button("ENTER");
-        
-        //fourth row of keys
-        Button shift1Btn = new Button("SHIFT");
-        Button zBtn = new Button("z");
-        Button xBtn = new Button("x");
-        Button cBtn = new Button("c");
-        Button vBtn = new Button("v");
-        Button bBtn = new Button("b");
-        Button nBtn = new Button("n");
-        Button mBtn = new Button("m");
-        Button commaBtn = new Button(",");
-        Button periodBtn = new Button(".");
-        Button slashBtn = new Button("/");
-        Button shift2Btn = new Button("SHIFT");
-        
+                
         //fifth row of keys
         Button spaceBtn = new Button(" ");
         
