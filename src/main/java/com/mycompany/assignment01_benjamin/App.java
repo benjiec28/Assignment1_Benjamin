@@ -30,8 +30,8 @@ public class App extends Application {
     private Label statsLabel;
     
     private int currentIdx = 0;
-    private int errors = 0;
-    private int corrects = 0;
+    private int errorCount = 0;
+    private int correctCount = 0;
     
     private TextField targetText;
     private TextField userText;
@@ -51,7 +51,7 @@ public class App extends Application {
     private final Map<KeyCode, Button> keyBtnMap = new HashMap<>();
      
     // first row of keys
-    private final Object[][] keys1 = {
+    private final Object[][] keyRow1 = {
         {"`", KeyCode.BACK_QUOTE}, {"1", KeyCode.DIGIT1}, {"2", KeyCode.DIGIT2}, {"3", KeyCode.DIGIT3},
         {"4", KeyCode.DIGIT4}, {"5", KeyCode.DIGIT5}, {"6", KeyCode.DIGIT6}, {"7", KeyCode.DIGIT7},
         {"8", KeyCode.DIGIT8}, {"9", KeyCode.DIGIT9}, {"0", KeyCode.DIGIT0}, {"-", KeyCode.MINUS},
@@ -59,21 +59,21 @@ public class App extends Application {
     };
     
     // second row of keys
-    private final Object[][] keys2 = {
+    private final Object[][] keyRow2 = {
         {"Q", KeyCode.Q}, {"W", KeyCode.W}, {"E", KeyCode.E}, {"R", KeyCode.R},
         {"T", KeyCode.T}, {"Y", KeyCode.Y}, {"U", KeyCode.U}, {"I", KeyCode.I},
         {"O", KeyCode.O}, {"P", KeyCode.P}, {"[", KeyCode.OPEN_BRACKET}, {"]", KeyCode.CLOSE_BRACKET},
         {"\\", KeyCode.BACK_SLASH}
     };    
     // third row of keys
-    private final Object[][] keys3 = {
+    private final Object[][] keyRow3 = {
         {"A", KeyCode.A}, {"S", KeyCode.S}, {"D", KeyCode.D}, {"F", KeyCode.F},
         {"G", KeyCode.G}, {"H", KeyCode.H}, {"J", KeyCode.J}, {"K", KeyCode.K},
         {"L", KeyCode.L}, {";", KeyCode.SEMICOLON}, {"'", KeyCode.QUOTE}, {"ENTER", KeyCode.ENTER},
     };
     
     // fourth row of keys
-    private final Object[][] keys4 = {
+    private final Object[][] keyRow4 = {
         {"SHIFT", KeyCode.SHIFT}, {"Z", KeyCode.Z}, {"X", KeyCode.X}, {"C", KeyCode.C},
         {"V", KeyCode.V}, {"B", KeyCode.B}, {"N", KeyCode.N}, {"M", KeyCode.M},
         {",", KeyCode.COMMA}, {".", KeyCode.PERIOD}, {"/", KeyCode.SLASH}
@@ -118,7 +118,7 @@ public class App extends Application {
         
         counter= new Label();
         updateCounter();
-        counter.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
+        counter.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: blue;");
         
         Button next = new Button("NEXT");
         next.setOnAction(e -> nextText());
@@ -155,8 +155,8 @@ public class App extends Application {
     
     private void resetApp() {
         currentIdx = 0;
-        corrects = 0;
-        errors = 0;
+        correctCount = 0;
+        errorCount = 0;
         loadCurrentText();
     }
     
@@ -187,10 +187,10 @@ public class App extends Application {
         keyboard.setPadding(new Insets(15));
         keyboard.setStyle("-fx-background-color: #363332; -fx-background-radius: 10;");
         
-        keyboard.getChildren().add(createRow(keys1, 50));
-        keyboard.getChildren().add(createRow(keys2, 50));
-        keyboard.getChildren().add(createRow(keys3, 50));
-        keyboard.getChildren().add(createRow(keys4, 50));
+        keyboard.getChildren().add(createRow(keyRow1, 50));
+        keyboard.getChildren().add(createRow(keyRow2, 50));
+        keyboard.getChildren().add(createRow(keyRow3, 50));
+        keyboard.getChildren().add(createRow(keyRow4, 50));
         
         HBox spaceRow = new HBox(5);
         spaceRow.setAlignment(Pos.CENTER);
@@ -256,16 +256,42 @@ public class App extends Application {
     }
     
     private void calculateStats() {
+        String target = targetText.getText();
+        String response = userText.getText();
+        
+        correctCount = 0;
+        errorCount = 0;
+        
+        for (int i = 0; i < response.length(); i++) {
+            if (i < target.length()) {
+                if (response.charAt(i) == target.charAt(i)) {
+                        correctCount++;
+                    } else {
+                        errorCount++;
+                    }
+            } else {
+                errorCount++;
+            }
+        }
+        
+        updateStats();
+    }
+    
+    private void updateStats() {
+        counter.setText("Correct: " + correctCount + " | Errors: " + errorCount);
+    }
+    
+    private void keyReleased(KeyEvent e) {
+        KeyCode code = e.getCode();
+        
+        if (keyBtnMap.containsKey(code)) {
+            keyBtnMap.get(code).setStyle(normalKeyStyle);
+        }
         
     }
-//    
-//    private void keyReleased(KeyEvent e) {
-//        
-//        
-//    }
 
     public static void main(String[] args) {
-        launch();
+        launch(args);
     }
 
 }
