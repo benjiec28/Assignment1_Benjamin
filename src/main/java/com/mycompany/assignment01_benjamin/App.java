@@ -107,6 +107,8 @@ public class App extends Application {
         stage.show();
     }
     
+    // a top bar containing a next button, a reset button and a counter displaying the amount errors or corrects the user got.
+    
     private HBox topBar() {
         HBox topBar = new HBox(15);
         topBar.setAlignment(Pos.CENTER_LEFT);
@@ -157,6 +159,8 @@ public class App extends Application {
         loadCurrentText();
     }
     
+    // the area where the user will be able to see their target sentence and input their awnser.
+    
     private VBox textArea() {
         VBox vbox = new VBox(10);
         
@@ -181,10 +185,45 @@ public class App extends Application {
         return vbox;
     }
     
-//    private VBox virtualKeyboard() {
-//        
-//    }
-//    
+    private VBox virtualKeyboard() {
+        VBox keyboard = new VBox(5);
+        keyboard.setAlignment(Pos.CENTER);
+        keyboard.setPadding(new Insets(15));
+        keyboard.setStyle("-fx-background-color: #363332; -fx-background-radius: 10;");
+        
+        keyboard.getChildren().add(createRow(keys1, 50));
+        keyboard.getChildren().add(createRow(keys2, 50));
+        keyboard.getChildren().add(createRow(keys3, 50));
+        keyboard.getChildren().add(createRow(keys4, 50));
+        
+        
+    }
+    
+    
+    private HBox createRow(Object[][] keysRow, double width) {
+        HBox row = new HBox(5);
+        row.setAlignment(Pos.CENTER);
+        
+        for (Object[] key : keysRow) {
+            String label = (String) key[0];
+            KeyCode code = (KeyCode) key[1];
+            
+            Button btn = new Button(label);
+            btn.setPrefHeight(40);
+            btn.setStyle(normalKeyStyle);
+            btn.setFocusTraversable(false);
+            
+            if (code == KeyCode.BACK_SPACE || code == KeyCode.SHIFT) {
+                btn.setPrefWidth(100);
+            } else {
+                btn.setPrefWidth(width);
+            }
+            
+            keyBtnMap.put(code, btn);
+            
+            row.getChildren().add(btn);
+        }
+    }
 //    private void keyPressed(KeyEvent e) {
 //        
 //       
