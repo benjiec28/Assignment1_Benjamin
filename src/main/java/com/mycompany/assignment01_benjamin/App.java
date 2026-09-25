@@ -27,10 +27,11 @@ import javafx.stage.Stage;
 public class App extends Application {
     private Label counter;
     private Label keyStat;
+    private Label statsLabel;
     
-    private int currentIdx;
-    private int errors;
-    private int corrects;
+    private int currentIdx = 0;
+    private int errors = 0;
+    private int corrects = 0;
     
     private TextField targetText;
     private TextField userText;
@@ -120,9 +121,13 @@ public class App extends Application {
         
         Button reset = new Button("RESET");
         reset.setFocusTraversable(false);
-        reset.setOnAction(e -> resetApp);
+        reset.setOnAction(e -> resetApp());
         
+        statsLabel = new Label("Correct = 0 || Errors = 0");
+        statsLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
         
+        topBar.getChildren().addAll(counter, next, reset, statsLabel);
+        return topBar;
     }
     
     private void nextText() {
@@ -142,7 +147,7 @@ public class App extends Application {
     }
     
     private void updateCounter() {
-        counter.setText((currentIdx + 1) + "of" + sampleTexts.length());
+        counter.setText((currentIdx + 1) + "of" + sampleTexts.length);
     }
     
     private void resetApp() {
@@ -152,10 +157,30 @@ public class App extends Application {
         loadCurrentText();
     }
     
-//    private VBox textArea() {
-//        
-//    }
-//    
+    private VBox textArea() {
+        VBox vbox = new VBox(10);
+        
+        Label target = new Label("Type :");
+        target.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
+        
+        targetText = new TextField(sampleTexts[currentIdx]);
+        targetText.setEditable(false);
+        targetText.setFocusTraversable(false);
+        targetText.setFont(Font.font("Georgia", 15));
+        targetText.setStyle("-fx=background-color : #e8e8e8");
+        
+        Label response = new Label("Your Awnser: ");
+        response.setFont(Font.font("Georgia", 15));
+        
+        userText = new TextField();
+        userText.setEditable(false);
+        userText.setFocusTraversable(false);
+        userText.setFont(Font.font("Georgia", 15));
+        
+        vbox.getChildren().addAll(target, targetText, response, userText);
+        return vbox;
+    }
+    
 //    private VBox virtualKeyboard() {
 //        
 //    }
