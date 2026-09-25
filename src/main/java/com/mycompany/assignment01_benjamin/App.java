@@ -96,6 +96,9 @@ public class App extends Application {
 
         // keyboard
         VBox keyboard = virtualKeyboard();
+        
+        keyStat = new Label("Press any key.");
+        keyStat.setStyle("-fx-font-weight: bold; -fx-font-size: 15pt; -fx-text-fill: dark_blue;");
 
         //scene
         root.getChildren().addAll(topBar, textArea, keyboard);
@@ -118,15 +121,13 @@ public class App extends Application {
         counter.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
         
         Button next = new Button("NEXT");
-        next.setFocusTraversable(false);
         next.setOnAction(e -> nextText());
         
         Button reset = new Button("RESET");
-        reset.setFocusTraversable(false);
         reset.setOnAction(e -> resetApp());
         
         statsLabel = new Label("Correct = 0 || Errors = 0");
-        statsLabel.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
+        statsLabel.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: grey;");
         
         topBar.getChildren().addAll(counter, next, reset, statsLabel);
         return topBar;
@@ -165,21 +166,16 @@ public class App extends Application {
         VBox vbox = new VBox(10);
         
         Label target = new Label("Type :");
-        target.setFont(Font.font("Georgia", FontWeight.BOLD, 15));
+        target.setStyle("-fx-font-weight: bold; -fx-font-size: 12pt;");
         
         targetText = new TextField(sampleTexts[currentIdx]);
-        targetText.setEditable(false);
-        targetText.setFocusTraversable(false);
-        targetText.setFont(Font.font("Georgia", 15));
-        targetText.setStyle("-fx=background-color : #e8e8e8");
+        targetText.setStyle("-fx-background-color: light_grey; -fx-font-family: monospace; -fx-font-size: 14pt;");
         
         Label response = new Label("Your Awnser: ");
-        response.setFont(Font.font("Georgia", 15));
+        response.setStyle("-fx-background-color: lavender; -fx-font-family: monospace; -fx-font-size: 15pt;");
         
         userText = new TextField();
-        userText.setEditable(false);
-        userText.setFocusTraversable(false);
-        userText.setFont(Font.font("Georgia", 15));
+        userText.setStyle("-fx-background-color: grey; -fx-font-family: monospace; -fx-font-size: 15pt;");
         
         vbox.getChildren().addAll(target, targetText, response, userText);
         return vbox;
@@ -196,7 +192,18 @@ public class App extends Application {
         keyboard.getChildren().add(createRow(keys3, 50));
         keyboard.getChildren().add(createRow(keys4, 50));
         
+        HBox spaceRow = new HBox(5);
+        spaceRow.setAlignment(Pos.CENTER);
+        Button spaceButton = new Button("SPACE");
+        spaceButton.setPrefSize(300, 50);
+        spaceButton.setStyle(normalKeyStyle);
         
+        keyBtnMap.put(KeyCode.SPACE, spaceButton);
+        
+        spaceRow.getChildren().add(spaceButton);
+        keyboard.getChildren().add(spaceRow);
+        
+        return keyboard;
     }
     
     
@@ -209,25 +216,48 @@ public class App extends Application {
             KeyCode code = (KeyCode) key[1];
             
             Button btn = new Button(label);
-            btn.setPrefHeight(40);
             btn.setStyle(normalKeyStyle);
-            btn.setFocusTraversable(false);
             
             if (code == KeyCode.BACK_SPACE || code == KeyCode.SHIFT) {
-                btn.setPrefWidth(100);
+                btn.setPrefSize(100, 50);
             } else {
-                btn.setPrefWidth(width);
+                btn.setPrefSize(width, 50);
             }
             
             keyBtnMap.put(code, btn);
             
             row.getChildren().add(btn);
         }
+        
+        return row;
     }
-//    private void keyPressed(KeyEvent e) {
-//        
-//       
-//    }
+    
+    private void keyPressed(KeyEvent e) {
+        KeyCode code = e.getCode();
+        
+        if (keyBtnMap.containsKey(code)) {
+            keyBtnMap.get(code).setStyle(pressedKeyStyle);
+            keyStat.setText("Key Pressed : " + code.getName());
+            keyStat.setStyle("-fx-font-weight: bold; -fx-font-style: monospace; -fx-font-size: 15pt; -fx-text-fill: blue;");
+           
+        } else {
+            keyStat.setText("Not Handled: " + code.getName());
+            keyStat.setStyle("-fx-font-weight: bold; -fx-font-style: monospace; -fx-font-size: 15pt; -fx-text-fill: red;");
+        }
+       
+        String currentTyped = userText.getText();
+        
+        if (code == KeyCode.BACK_SPACE) {
+            if (currentTyped.length() > 0) {
+                userText.setText(currentTyped.substring(0, currentTyped.length() - 1));
+                calculateStats();
+            }
+        }
+    }
+    
+    private void calculateStats() {
+        
+    }
 //    
 //    private void keyReleased(KeyEvent e) {
 //        
