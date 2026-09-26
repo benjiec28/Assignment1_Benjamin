@@ -118,14 +118,14 @@ public class App extends Application {
         counter.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: blue;");
         
         Button next = new Button("NEXT");
-        next.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: green;");
+        next.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 9pt; -fx-text-fill: green;");
         next.setOnAction(e -> {
             nextText();
             root.requestFocus();
         });
         
         Button reset = new Button("RESET");
-        reset.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: red;");
+        reset.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 9pt; -fx-text-fill: red;");
         reset.setOnAction(e -> {
             resetApp();
             root.requestFocus();
@@ -139,8 +139,8 @@ public class App extends Application {
     }
     
     /**
-     * Creates the textArea
-     * @return the textArea
+     * Creates the textArea where the user will be able to see what sentence to type and to type it in the designated field below.
+     * @return the textArea.
      */
     private VBox textArea() {
         VBox vbox = new VBox(10);
@@ -191,9 +191,9 @@ public class App extends Application {
     }
     
     /**
-     * A helper method allowing
-     * @param keysRow
-     * @param width
+     * A helper method that creates a row for the keyboard.
+     * @param keysRow the row.
+     * @param width the default width of a key.
      * @return a row of the keyboard.
      */
     private HBox createRow(Object[][] keysRow, double width) {
@@ -222,8 +222,8 @@ public class App extends Application {
     }
     
     /**
-     * 
-     * @param e 
+     * Displays the key pressed and checks if it could be handled or not. Makes BACK_SPACE able to delete a character.
+     * @param e the keyEvent.
      */
     private void keyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
@@ -249,8 +249,8 @@ public class App extends Application {
     }
     
     /**
-     * 
-     * @param e 
+     * Types the key unto the label.
+     * @param e the keyEvent.
      */
     private void keyTyped(KeyEvent e) {
         String character = e.getCharacter();
@@ -267,7 +267,8 @@ public class App extends Application {
     }
     
     /**
-     * @param e 
+     * When the key is released, it returns it back its normal key style.
+     * @param e the keyEvent.
      */
     private void keyReleased(KeyEvent e) {
         KeyCode code = e.getCode();
@@ -278,7 +279,7 @@ public class App extends Application {
     }
     
     /**
-     * A helper method allowing
+     * A helper method that goes to the next sentence.
      */
     private void nextText() {
         if (currentIdx < sampleTexts.length - 1) {
@@ -287,11 +288,15 @@ public class App extends Application {
             currentIdx = 0;
         }
         
+        correctCount = 0;
+        errorCount = 0;
+        
+        updateStats();
         loadCurrentText();
     }
     
     /**
-     * A helper method allowing
+     * A helper method that displays the new sentence, and refreshes the user text box and the key status.
      */
     private void loadCurrentText() {
         targetText.setText(sampleTexts[currentIdx]);
@@ -301,24 +306,26 @@ public class App extends Application {
     }
     
     /**
-     * A helper method allowing
+     * A helper method that updates the page number.
      */
     private void updateCounter() {
         counter.setText((currentIdx + 1) + " of " + sampleTexts.length);
     }
     
     /**
-     * A helper method allowing
+     * A helper method resetting all values to their default value.
      */
     private void resetApp() {
         currentIdx = 0;
         correctCount = 0;
         errorCount = 0;
+        
+        updateStats();
         loadCurrentText();
     }
     
     /**
-     * A helper method allowing
+     * A helper method that keeps track of the amount of errors or correct letters that the user has inputted.
      */
     private void calculateStats() {
         String target = targetText.getText();
@@ -343,16 +350,12 @@ public class App extends Application {
     }
     
     /**
-     * A helper method allowing
+     * A helper method that updates the display of the amount of errors or correct letters.
      */
     private void updateStats() {
         statsLabel.setText("Correct: " + correctCount + " | Errors: " + errorCount);
     }
-    
-    /**
-     * A helper method allowing
-     * @param args 
-     */
+  
     public static void main(String[] args) {
         launch(args);
     }
