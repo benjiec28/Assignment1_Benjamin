@@ -8,12 +8,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -24,16 +22,16 @@ public class App extends Application {
     private Label counter;
     private Label keyStat;
     private Label statsLabel;
+    private Label targetText;
+    private Label userText;
     
     private int currentIdx = 0;
     private int errorCount = 0;
     private int correctCount = 0;
     
-    private TextField targetText;
-    private TextField userText;
+    private VBox root;
     
-    
-    //sample texts
+    // sample texts
     private final String[] sampleTexts = {
         "Try typing this text. Do it as quickly and accurately as you can.",
         "Next type another line of input data.",
@@ -43,7 +41,7 @@ public class App extends Application {
         "A large fawn jumped quickly over white zinc boxes."
     };
     
-    //keyboard keys
+    // keyboard keys
     private final Map<KeyCode, Button> keyBtnMap = new HashMap<>();
      
     // first row of keys
@@ -80,27 +78,22 @@ public class App extends Application {
     
     @Override
     public void start(Stage stage) {
-        VBox root = new VBox(15);
+        root = new VBox(15);
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color: white");
 
-        // top bar
         HBox topBar = topBar();
 
-        // text area (where the player will see and type the sentence)
         VBox textArea = textArea();
 
-        // keyboard
         VBox keyboard = virtualKeyboard();
         
         keyStat = new Label("Press any key...");
         keyStat.setStyle("-fx-font-weight: bold; -fx-font-size: 15pt; -fx-text-fill: darkblue;");
 
-        //scene
         root.getChildren().addAll(topBar, keyStat, textArea, keyboard);
 
-        Scene scene = new Scene(root, 800, 625);
-        
+        Scene scene = new Scene(root, 900, 625);
         scene.setOnKeyPressed(e -> keyPressed(e));
         scene.setOnKeyReleased(e -> keyReleased(e));
         scene.setOnKeyTyped(e -> keyTyped(e));
@@ -108,10 +101,14 @@ public class App extends Application {
         stage.setTitle("Typing Tutor");
         stage.setScene(scene);
         stage.show();
+        
+        root.requestFocus();
     }
     
-    // a top bar containing a next button, a reset button and a counter displaying the amount errors or corrects the user got.
-    
+    /**
+     * Creates the top bar containing the counter, the next button, the RESET button and the statics (amount of errors and corrects). 
+     * @return the topBar.
+     */
     private HBox topBar() {
         HBox topBar = new HBox(15);
         topBar.setAlignment(Pos.CENTER_LEFT);
@@ -122,11 +119,17 @@ public class App extends Application {
         
         Button next = new Button("NEXT");
         next.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: green;");
-        next.setOnAction(e -> nextText());
+        next.setOnAction(e -> {
+            nextText();
+            root.requestFocus();
+        });
         
         Button reset = new Button("RESET");
         reset.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: red;");
-        reset.setOnAction(e -> resetApp());
+        reset.setOnAction(e -> {
+            resetApp();
+            root.requestFocus();
+                });
         
         statsLabel = new Label("Correct = 0 || Errors = 0");
         statsLabel.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: black;");
@@ -135,27 +138,33 @@ public class App extends Application {
         return topBar;
     }
     
-    // the area where the user will be able to see their target sentence and input their awnser.
-    
+    /**
+     * Creates the textArea
+     * @return the textArea
+     */
     private VBox textArea() {
         VBox vbox = new VBox(10);
         
         Label target = new Label("Type :");
-        target.setStyle("-fx-font-weight: bold; -fx-font-size: 12pt;");
+        target.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 13pt; -fx-text-fill: black;");
         
-        targetText = new TextField(sampleTexts[currentIdx]);
-        targetText.setStyle("-fx-font-weight: bold; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 14pt;");
+        targetText = new Label(sampleTexts[currentIdx]);
+        targetText.setStyle("-fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 15pt;");
         
         Label response = new Label("Your Answer: ");
-        response.setStyle("-fx-font-weight: bold; -fx-background-fill: lighgrey; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 15pt;");
+        response.setStyle("-fx-font-weight: bold; -fx-background-fill: lighgrey; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 13pt;");
         
-        userText = new TextField();
-        userText.setStyle("-fx-font-weight: bold; -fx-background-color: white; -fx-font-family: monospace; -fx-font-size: 15pt;");
+        userText = new Label();
+        userText.setStyle("-fx-font-family: monospace; -fx-font-size: 15pt;");
         
         vbox.getChildren().addAll(target, targetText, response, userText);
         return vbox;
     }
     
+    /**
+     * Creates the virtual keyboard.
+     * @return the virtual keyboard.
+     */
     private VBox virtualKeyboard() {
         VBox keyboard = new VBox(5);
         keyboard.setAlignment(Pos.CENTER);
@@ -181,7 +190,12 @@ public class App extends Application {
         return keyboard;
     }
     
-    
+    /**
+     * A helper method allowing
+     * @param keysRow
+     * @param width
+     * @return a row of the keyboard.
+     */
     private HBox createRow(Object[][] keysRow, double width) {
         HBox row = new HBox(5);
         row.setAlignment(Pos.CENTER);
@@ -207,10 +221,14 @@ public class App extends Application {
         return row;
     }
     
+    /**
+     * 
+     * @param e 
+     */
     private void keyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
         
-        if (keyBtnMap.containsKey(code)) {
+        if (keyBtnMap.containsKey(code) ) {
             keyBtnMap.get(code).setStyle(pressedKeyStyle);
             keyStat.setText("Key Pressed : " + code.getName());
             keyStat.setStyle("-fx-font-weight: bold; -fx-font-style: monospace; -fx-font-size: 15pt; -fx-text-fill: blue;");
@@ -230,6 +248,10 @@ public class App extends Application {
         }
     }
     
+    /**
+     * 
+     * @param e 
+     */
     private void keyTyped(KeyEvent e) {
         String character = e.getCharacter();
         
@@ -244,6 +266,20 @@ public class App extends Application {
         }
     }
     
+    /**
+     * @param e 
+     */
+    private void keyReleased(KeyEvent e) {
+        KeyCode code = e.getCode();
+        
+        if (keyBtnMap.containsKey(code)) {
+            keyBtnMap.get(code).setStyle(normalKeyStyle);
+        }   
+    }
+    
+    /**
+     * A helper method allowing
+     */
     private void nextText() {
         if (currentIdx < sampleTexts.length - 1) {
             currentIdx++;
@@ -254,17 +290,26 @@ public class App extends Application {
         loadCurrentText();
     }
     
+    /**
+     * A helper method allowing
+     */
     private void loadCurrentText() {
         targetText.setText(sampleTexts[currentIdx]);
-        userText.clear();
+        userText.setText("");
         keyStat.setText("Press any key...");
         updateCounter();
     }
     
+    /**
+     * A helper method allowing
+     */
     private void updateCounter() {
         counter.setText((currentIdx + 1) + " of " + sampleTexts.length);
     }
     
+    /**
+     * A helper method allowing
+     */
     private void resetApp() {
         currentIdx = 0;
         correctCount = 0;
@@ -272,6 +317,9 @@ public class App extends Application {
         loadCurrentText();
     }
     
+    /**
+     * A helper method allowing
+     */
     private void calculateStats() {
         String target = targetText.getText();
         String response = userText.getText();
@@ -294,18 +342,17 @@ public class App extends Application {
         updateStats();
     }
     
+    /**
+     * A helper method allowing
+     */
     private void updateStats() {
         statsLabel.setText("Correct: " + correctCount + " | Errors: " + errorCount);
     }
     
-    private void keyReleased(KeyEvent e) {
-        KeyCode code = e.getCode();
-        
-        if (keyBtnMap.containsKey(code)) {
-            keyBtnMap.get(code).setStyle(normalKeyStyle);
-        }   
-    }
-
+    /**
+     * A helper method allowing
+     * @param args 
+     */
     public static void main(String[] args) {
         launch(args);
     }
