@@ -11,13 +11,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 
@@ -86,7 +82,7 @@ public class App extends Application {
     public void start(Stage stage) {
         VBox root = new VBox(15);
         root.setPadding(new Insets(20));
-        root.setStyle("-fx-background-color: #c3c2f0");
+        root.setStyle("-fx-background-color: white");
 
         // top bar
         HBox topBar = topBar();
@@ -97,13 +93,17 @@ public class App extends Application {
         // keyboard
         VBox keyboard = virtualKeyboard();
         
-        keyStat = new Label("Press any key.");
-        keyStat.setStyle("-fx-font-weight: bold; -fx-font-size: 15pt; -fx-text-fill: dark_blue;");
+        keyStat = new Label("Press any key...");
+        keyStat.setStyle("-fx-font-weight: bold; -fx-font-size: 15pt; -fx-text-fill: darkblue;");
 
         //scene
-        root.getChildren().addAll(topBar, textArea, keyboard);
+        root.getChildren().addAll(topBar, keyStat, textArea, keyboard);
 
-        Scene scene = new Scene(root, 800, 700);
+        Scene scene = new Scene(root, 800, 625);
+        
+        scene.setOnKeyPressed(e -> keyPressed(e));
+        scene.setOnKeyReleased(e -> keyReleased(e));
+        scene.setOnKeyTyped(e -> keyTyped(e));
 
         stage.setTitle("Typing Tutor");
         stage.setScene(scene);
@@ -116,48 +116,23 @@ public class App extends Application {
         HBox topBar = new HBox(15);
         topBar.setAlignment(Pos.CENTER_LEFT);
         
-        counter= new Label();
+        counter = new Label();
         updateCounter();
         counter.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: blue;");
         
         Button next = new Button("NEXT");
+        next.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: green;");
         next.setOnAction(e -> nextText());
         
         Button reset = new Button("RESET");
+        reset.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 8pt; -fx-text-fill: red;");
         reset.setOnAction(e -> resetApp());
         
         statsLabel = new Label("Correct = 0 || Errors = 0");
-        statsLabel.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: grey;");
+        statsLabel.setStyle("-fx-font-weight: bold; -fx-font-family: monospace; -fx-font-size: 15pt; -fx-text-fill: black;");
         
         topBar.getChildren().addAll(counter, next, reset, statsLabel);
         return topBar;
-    }
-    
-    private void nextText() {
-        if (currentIdx < sampleTexts.length - 1) {
-            currentIdx++;
-        } else {
-            currentIdx = 0;
-        }
-        loadCurrentText();
-    }
-    
-    private void loadCurrentText() {
-        targetText.setText(sampleTexts[currentIdx]);
-        userText.clear();
-        keyStat.setText("Press any key...");
-        keyStat.setTextFill(Color.YELLOW);
-    }
-    
-    private void updateCounter() {
-        counter.setText((currentIdx + 1) + "of" + sampleTexts.length);
-    }
-    
-    private void resetApp() {
-        currentIdx = 0;
-        correctCount = 0;
-        errorCount = 0;
-        loadCurrentText();
     }
     
     // the area where the user will be able to see their target sentence and input their awnser.
@@ -169,13 +144,13 @@ public class App extends Application {
         target.setStyle("-fx-font-weight: bold; -fx-font-size: 12pt;");
         
         targetText = new TextField(sampleTexts[currentIdx]);
-        targetText.setStyle("-fx-background-color: light_grey; -fx-font-family: monospace; -fx-font-size: 14pt;");
+        targetText.setStyle("-fx-font-weight: bold; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 14pt;");
         
-        Label response = new Label("Your Awnser: ");
-        response.setStyle("-fx-background-color: lavender; -fx-font-family: monospace; -fx-font-size: 15pt;");
+        Label response = new Label("Your Answer: ");
+        response.setStyle("-fx-font-weight: bold; -fx-background-fill: lighgrey; -fx-text-fill: black; -fx-font-family: monospace; -fx-font-size: 15pt;");
         
         userText = new TextField();
-        userText.setStyle("-fx-background-color: grey; -fx-font-family: monospace; -fx-font-size: 15pt;");
+        userText.setStyle("-fx-font-weight: bold; -fx-background-color: white; -fx-font-family: monospace; -fx-font-size: 15pt;");
         
         vbox.getChildren().addAll(target, targetText, response, userText);
         return vbox;
@@ -185,7 +160,7 @@ public class App extends Application {
         VBox keyboard = new VBox(5);
         keyboard.setAlignment(Pos.CENTER);
         keyboard.setPadding(new Insets(15));
-        keyboard.setStyle("-fx-background-color: #363332; -fx-background-radius: 10;");
+        keyboard.setStyle("-fx-font-weight: bold; -fx-background-color: grey; -fx-background-radius: 10;");
         
         keyboard.getChildren().add(createRow(keyRow1, 50));
         keyboard.getChildren().add(createRow(keyRow2, 50));
@@ -218,7 +193,7 @@ public class App extends Application {
             Button btn = new Button(label);
             btn.setStyle(normalKeyStyle);
             
-            if (code == KeyCode.BACK_SPACE || code == KeyCode.SHIFT) {
+            if (code == KeyCode.BACK_SPACE || code == KeyCode.SHIFT || code == KeyCode.ENTER) {
                 btn.setPrefSize(100, 50);
             } else {
                 btn.setPrefSize(width, 50);
@@ -255,6 +230,48 @@ public class App extends Application {
         }
     }
     
+    private void keyTyped(KeyEvent e) {
+        String character = e.getCharacter();
+        
+        if (character.length() > 0) {
+            char c = character.charAt(0);
+            
+            if (c >= 32) {
+                String currentType = userText.getText();
+                userText.setText(currentType + character);
+                calculateStats();
+            }
+        }
+    }
+    
+    private void nextText() {
+        if (currentIdx < sampleTexts.length - 1) {
+            currentIdx++;
+        } else {
+            currentIdx = 0;
+        }
+        
+        loadCurrentText();
+    }
+    
+    private void loadCurrentText() {
+        targetText.setText(sampleTexts[currentIdx]);
+        userText.clear();
+        keyStat.setText("Press any key...");
+        updateCounter();
+    }
+    
+    private void updateCounter() {
+        counter.setText((currentIdx + 1) + " of " + sampleTexts.length);
+    }
+    
+    private void resetApp() {
+        currentIdx = 0;
+        correctCount = 0;
+        errorCount = 0;
+        loadCurrentText();
+    }
+    
     private void calculateStats() {
         String target = targetText.getText();
         String response = userText.getText();
@@ -278,7 +295,7 @@ public class App extends Application {
     }
     
     private void updateStats() {
-        counter.setText("Correct: " + correctCount + " | Errors: " + errorCount);
+        statsLabel.setText("Correct: " + correctCount + " | Errors: " + errorCount);
     }
     
     private void keyReleased(KeyEvent e) {
@@ -286,8 +303,7 @@ public class App extends Application {
         
         if (keyBtnMap.containsKey(code)) {
             keyBtnMap.get(code).setStyle(normalKeyStyle);
-        }
-        
+        }   
     }
 
     public static void main(String[] args) {
